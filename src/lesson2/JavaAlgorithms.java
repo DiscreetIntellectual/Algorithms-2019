@@ -2,8 +2,13 @@ package lesson2;
 
 import kotlin.NotImplementedError;
 import kotlin.Pair;
+import kotlin.text.Charsets;
 
-import java.util.Set;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class JavaAlgorithms {
@@ -31,9 +36,38 @@ public class JavaAlgorithms {
      *
      * В случае обнаружения неверного формата файла бросить любое исключение.
      */
-    static public Pair<Integer, Integer> optimizeBuyAndSell(String inputName) {
-        throw new NotImplementedError();
+    static public Pair<Integer, Integer> optimizeBuyAndSell(String inputName) throws Exception {
+        if (!Files.lines(Paths.get(inputName)).allMatch(t -> (t.matches("^\\d+$"))))
+            throw new IllegalArgumentException();
+
+        List<Integer> prices = new ArrayList<Integer>();
+        List<Integer> delta = new ArrayList<Integer>();
+        List<String> inputLines = Files.readAllLines(Paths.get(inputName));
+
+        prices.add(Integer.parseInt(inputLines.get(0)));
+        for (int k = 1; k < inputLines.size(); k++) {
+            prices.add(Integer.parseInt(inputLines.get(k)));
+            delta.add(prices.get(prices.size() - 1) - prices.get(prices.size() - 2));
+        }
+        if (delta.isEmpty()) throw new IllegalArgumentException();
+
+        int maxSum = delta.get(0), left = 0, right = 0, sum = 0, minLeft = -1;
+        for (int i = 0; i < delta.size(); i++) {
+            sum += delta.get(i);
+            if (sum > maxSum) {
+                maxSum = sum;
+                left = minLeft + 1;
+                right = i;
+            }
+            if (sum < 0) {
+                sum = 0;
+                minLeft = i;
+            }
+        }
+        return new Pair<Integer, Integer>(left + 1, right + 2);
     }
+    // Трудоемкость - O(n)
+    // Ресурсоемкость - O(n)
 
     /**
      * Задача Иосифа Флафия.
@@ -99,9 +133,27 @@ public class JavaAlgorithms {
      * Если имеется несколько самых длинных общих подстрок одной длины,
      * вернуть ту из них, которая встречается раньше в строке first.
      */
-    static public String longestCommonSubstring(String firs, String second) {
-        throw new NotImplementedError();
+    static public String longestCommonSubstring(String first, String second) {
+        int[][] dynamic = new int[first.length() + 1][second.length() + 1];
+        int i, j;
+        int maxLen = 0, maxI = 0;
+
+        for (i = 1; i < first.length() + 1; i++) {
+            for (j = 1; j < second.length() + 1; j++) {
+                if (first.charAt(i - 1) == second.charAt(j - 1)) {
+                    dynamic[i][j] = dynamic[i - 1][j - 1] + 1;
+                    if (dynamic[i][j] > maxLen ||
+                            dynamic[i][j] == maxLen && i < maxI) {
+                        maxLen = dynamic[i][j];
+                        maxI = i;
+                    }
+                }
+            }
+        }
+        return first.substring(maxI - maxLen, maxI);
     }
+    // Трудоемкость - O(first.length() * second.length())
+    // Ресурсоемкость - O(first.length() * second.length())
 
     /**
      * Число простых чисел в интервале
@@ -143,7 +195,51 @@ public class JavaAlgorithms {
      * В файле буквы разделены пробелами, строки -- переносами строк.
      * Остальные символы ни в файле, ни в словах не допускаются.
      */
-    static public Set<String> baldaSearcher(String inputName, Set<String> words) {
-        throw new NotImplementedError();
+    static public Set<String> baldaSearcher(String inputName, Set<String> words) throws Exception {
+        if (!Files.lines(Paths.get(inputName)).allMatch(t -> (t.matches("^[A-ZА-Я\\s]+$"))))
+            throw new IllegalArgumentException();
+        List<String> inputLines = Files.readAllLines(Paths.get(inputName));
+        List<String[]> table = new ArrayList<String[]>();
+        Set<String> ans = new HashSet<String>();
+
+        for (String line: inputLines) {
+            table.add(line.split(" "));
+        }
+        for (String[] line: table)
+        for (int i = 0; i < table.size(); i++) {
+            for (int j = 0; j < table.get(0).length; j++) {
+                for (String word: words) {
+                    if (table.get(i)[j].equals(word.substring(0, 1))) {
+                        if (dfs(i, j, table, word.substring(1))) {
+                            ans.add(word);
+                        }
+                    }
+                }
+            }
+        }
+        return ans;
     }
+
+    private static boolean dfs(int i, int j, List<String[]> table, String suffix) {
+        if (suffix.isEmpty()) return true;
+        int x, y;
+        Iterator<Integer> iterX = Arrays.asList(i - 1, i, i, i + 1).iterator();
+        Iterator<Integer> iterY = Arrays.asList(j, j - 1, j + 1, j).iterator();
+        for (int k = 0; k < 4; k++){
+            x = iterX.next();
+            y = iterY.next();
+            if (x > -1 && x < table.size() && y > -1 && y < table.get(0).length &&
+                    table.get(x)[y].charAt(0) == suffix.charAt(0) &&
+                    dfs(x, y, table, suffix.substring(1))) {
+                return true;
+            }
+        }
+        return false;
+    }
+    // Пусть n - количество строк в матрице, m - количество столбцов в матрице,
+    // k - количество слов в множестве words, len - длина самого большого слова в множестве words
+    // Трудоемкость - О(n * m * k * len)
+    // Ресурсоемкость - О(n * m)
+
 }
+

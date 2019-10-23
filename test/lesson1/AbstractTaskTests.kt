@@ -119,6 +119,25 @@ abstract class AbstractTaskTests : AbstractFileTests() {
             File("temp.txt").delete()
         }
 
+        try {
+            sortTemperatures("input/tempInput.txt", "input/tempOutput.txt")
+            assertFileContent(
+                "input/tempOutput.txt",
+                """
+                    -273.0
+                    -273.0
+                    -272.9
+                    0.0
+                    0.0
+                    499.9
+                    500.0
+                    500.0
+                """.trimIndent()
+            )
+        } finally {
+
+        }
+
         fun testGeneratedTemperatures(size: Int): PerfResult<Unit> {
             try {
                 val res = generateTemperatures(size)
@@ -277,6 +296,36 @@ abstract class AbstractTaskTests : AbstractFileTests() {
         } finally {
             File("temp.txt").delete()
         }
+        try {
+            sortSequence("input/seq_in6.txt", "temp.txt")
+            assertFileContent(
+                "temp.txt",
+                """
+                    7
+                    7
+                    7
+                    7
+                    7
+                    33
+                    33
+                    7
+                    7
+                    7
+                    1
+                    2
+                    3
+                    3
+                    3
+                    3
+                    3
+                    3
+                    3
+                    3
+                """.trimIndent()
+            )
+        } finally {
+            File("temp.txt").delete()
+        }
 
         fun testGeneratedSequence(totalSize: Int, answerSize: Int): PerfResult<Unit> {
             try {
@@ -326,6 +375,10 @@ abstract class AbstractTaskTests : AbstractFileTests() {
         val result = arrayOf(null, null, null, null, null, 1, 3, 9, 13, 18, 23)
         mergeArrays(arrayOf(4, 9, 15, 20, 23), result)
         assertArrayEquals(arrayOf(1, 3, 4, 9, 9, 13, 15, 18, 20, 23, 23), result)
+
+        val userTrial = arrayOf(null, null, null, -9999, -99, 9, 999)
+        mergeArrays(arrayOf(-66666, -6666, 66), userTrial)
+        assertArrayEquals(arrayOf(-66666, -9999, -6666, -99, 9, 66, 999), userTrial)
 
         fun testGeneratedArrays(
             firstSize: Int,

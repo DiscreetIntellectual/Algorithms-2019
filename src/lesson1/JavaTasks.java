@@ -2,6 +2,11 @@ package lesson1;
 
 import kotlin.NotImplementedError;
 
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
+
 @SuppressWarnings("unused")
 public class JavaTasks {
     /**
@@ -99,8 +104,28 @@ public class JavaTasks {
      * 121.3
      */
     static public void sortTemperatures(String inputName, String outputName) {
-        throw new NotImplementedError();
+        try {
+            FileReader inputFile = new FileReader(inputName);
+            Scanner inputScan = new Scanner(inputFile);
+            FileWriter outputFile = new FileWriter(outputName);
+            int[] countList = new int[7731];
+            int temp;
+            while (inputScan.hasNextLine()) {
+                temp = (int) ( Double.parseDouble(inputScan.nextLine()) * 10 + 2730);
+                countList[temp]++;
+            }
+            for (int i = 0; i < 7731; i++) {
+                for (int j = 0; j < countList[i]; j++) {
+                    outputFile.write((i - 2730) / 10.0 + "\n");
+                }
+            }
+            inputFile.close();
+            outputFile.close();
+        }
+        catch (IOException e) {}
     }
+    // Трудоемкость: O(n)
+    // Ресурсоемкость: О(1)    <- int[7731] ~ O(1)
 
     /**
      * Сортировка последовательности
@@ -132,8 +157,41 @@ public class JavaTasks {
      * 2
      */
     static public void sortSequence(String inputName, String outputName) {
-        throw new NotImplementedError();
+        try {
+            FileReader inputFile = new FileReader(inputName);
+            Scanner inputScan = new Scanner(inputFile);
+            FileWriter outputFile = new FileWriter(outputName);
+            List<Integer> seq = new ArrayList<Integer>();
+            Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+            int temp;
+            int maxCount = -1;
+            int maxKey = 0;
+            List<String> maxKeys = new ArrayList<String>();
+            List<String> ans = new ArrayList<String>();
+            while (inputScan.hasNextLine()) {
+                temp = Integer.parseInt(inputScan.nextLine());
+                seq.add(temp);
+                if (map.containsKey(temp))
+                    map.put(temp, map.get(temp) + 1);
+                else map.put(temp, 0);
+                if (map.get(temp) > maxCount || (map.get(temp) == maxCount && temp < maxKey)) {
+                    maxKey = temp;
+                    maxCount = map.get(temp);
+                }
+            }
+            for (int i: seq) {
+                if (i == maxKey) maxKeys.add(Integer.toString(i));
+                else ans.add(Integer.toString(i));
+            }
+            ans.addAll(maxKeys);
+            outputFile.write(String.join("\n", ans));
+            inputFile.close();
+            outputFile.close();
+        }
+        catch (IOException e) {}
     }
+    // Трудоемкость: O(n)
+    // Ресурсоемкость: О(n)
 
     /**
      * Соединить два отсортированных массива в один
@@ -150,6 +208,29 @@ public class JavaTasks {
      * Результат: second = [1 3 4 9 9 13 15 20 23 28]
      */
     static <T extends Comparable<T>> void mergeArrays(T[] first, T[] second) {
-        throw new NotImplementedError();
+        int point1 = 0;
+        int point2 = first.length;
+        int i = 0;
+        while (point1 < first.length && point2 < second.length) {
+            if (first[point1].compareTo(second[point2]) < 0) {
+                second[i] = first[point1];
+                point1++;
+            }
+            else {
+                second[i] = second[point2];
+                point2++;
+            }
+            i++;
+        }
+        if (point2 == second.length) {
+            while (i < second.length) {
+                second[i] = first[point1];
+                point1++;
+                i++;
+            }
+        }
     }
+    // Трудоемкость: O(n)
+    // Ресурсоемкость: О(1)
+
 }

@@ -1,7 +1,9 @@
 package lesson2
 
+import org.junit.jupiter.api.assertThrows
 import java.io.BufferedWriter
 import java.io.File
+import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.test.assertEquals
 
@@ -46,6 +48,11 @@ abstract class AbstractAlgorithmsTests {
         assertEquals(3 to 4, optimizeBuyAndSell("input/buysell_in1.txt"))
         assertEquals(8 to 12, optimizeBuyAndSell("input/buysell_in2.txt"))
         assertEquals(3 to 4, optimizeBuyAndSell("input/buysell_in3.txt"))
+
+        assertEquals(2 to 5, optimizeBuyAndSell("input/buysell_in4.txt"))
+        assertThrows<IllegalArgumentException> { optimizeBuyAndSell("input/buysell_in5.txt") }
+        assertThrows<IllegalArgumentException> { optimizeBuyAndSell("input/buysell_in6.txt") }
+
         try {
             val expectedAnswer = generatePrices(1000)
             assertEquals(expectedAnswer, optimizeBuyAndSell("temp_prices.txt"))
@@ -58,6 +65,7 @@ abstract class AbstractAlgorithmsTests {
         } finally {
             File("temp_prices.txt").delete()
         }
+
     }
 
     fun josephTask(josephTask: (Int, Int) -> Int) {
@@ -77,6 +85,9 @@ abstract class AbstractAlgorithmsTests {
         assertEquals("", longestCommonSubstring("мой мир", "я"))
         assertEquals("зд", longestCommonSubstring("здравствуй мир", "мы здесь"))
         assertEquals("СЕРВАТОР", longestCommonSubstring("ОБСЕРВАТОРИЯ", "КОНСЕРВАТОРЫ"))
+
+        assertEquals("taman", longestCommonSubstring("rastaman", "atamania"))
+
         assertEquals(
             "огда ", longestCommonSubstring(
                 """
@@ -167,6 +178,17 @@ abstract class AbstractAlgorithmsTests {
                     "РАССУДИТЕЛЬНОСТЬ", "БЕЗРАССУДНОСТЬ", "КОНСТАНТИНОПОЛЬ", "СТАМБУЛ", "ПРОГРАММИРОВАНИЕ",
                     "ПРОСТРАНСТВО", "ДИАЛЕКТИКА", "КВАЛИФИКАЦИЯ", "ПОМЕХОУСТОЙЧИВОСТЬ", "КОГЕРЕНТНОСТЬ",
                     "АППРОКСИМАЦИЯ", "ИНТЕРПОЛЯЦИЯ", "МАЙЕВТИКА", "ШРЕДИНГЕР", "ЭЙНШТЕЙН"
+                )
+            )
+        )
+
+        assertEquals(
+            setOf(
+                "КАК", "ЭТУ", "БАЛДУ", "ТЕСТИТЬ", "ТЕСЛА"
+            ),
+            baldaSearcher(
+                "input/balda_in4.txt", setOf(
+                    "КАК", "ЭТУ", "БАЛДУ", "МОЖНО", "ВООБЩЕ", "ТЕСТИТЬ", "ТЕСЛА"
                 )
             )
         )
