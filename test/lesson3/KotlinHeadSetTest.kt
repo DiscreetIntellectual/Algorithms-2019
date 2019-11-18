@@ -41,4 +41,9 @@ class KotlinHeadSetTest : AbstractHeadTailTest() {
         doSubSetTest()
         doSubSetRelationTest()
     }
+
+    @Test
+    fun userSubSetTest() {
+        doUserSubSetTest()
+    }
 }

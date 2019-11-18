@@ -1,6 +1,8 @@
 package lesson3
 
+import org.junit.jupiter.api.assertThrows
 import java.util.*
+import kotlin.NoSuchElementException
 import kotlin.test.*
 
 abstract class AbstractHeadTailTest {
@@ -149,6 +151,35 @@ abstract class AbstractHeadTailTest {
         assertFailsWith<IllegalArgumentException> { set.add(20) }
         assertEquals(11, set.size)
         assertEquals(14, tree.size)
+    }
+
+    protected fun doUserSubSetTest() {
+        val tree: SortedSet<Int> = KtBinaryTree<Int>()
+        tree.add(1)
+        tree.add(3)
+        tree.add(4)
+        val maybeTree: SortedSet<Int> = tree.subSet(2, 10)
+        assertEquals(2, maybeTree.size)
+        assertTrue(maybeTree.contains(3))
+        assertFalse(maybeTree.contains(2))
+        tree.add(2)
+        tree.add(10)
+        tree.add(11)
+        assertTrue(maybeTree.containsAll(mutableListOf(2, 3, 4)))
+        assertFalse(maybeTree.contains(10))
+        assertFailsWith<IllegalArgumentException> { maybeTree.add(11) }
+
+        val iter = maybeTree.iterator()
+        var elem = 0
+        while (iter.hasNext()){
+            elem = iter.next()
+            iter.remove()
+        }
+        assertFalse(tree.size == 0)
+
+        val isATree = tree.tailSet(-917)
+        assertTrue(isATree.contains(11))
+        assertTrue(isATree.headSet(-916).size == 0)
     }
 
 }

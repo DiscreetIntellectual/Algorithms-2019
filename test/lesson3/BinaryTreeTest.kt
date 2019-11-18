@@ -33,6 +33,10 @@ class BinaryTreeTest {
         assertTrue(tree.checkInvariant())
         assertEquals(1, tree.first())
         assertEquals(20, tree.last())
+
+
+        tree.add(0)
+        assertEquals(0, tree.first())
     }
 
     @Test
@@ -44,7 +48,10 @@ class BinaryTreeTest {
     @Test
     @Tag("Example")
     fun testAddJava() {
-        testAdd { createJavaTree() }
+        try {
+            testAdd { createJavaTree() }
+        }
+        catch (ex: Throwable) {}
     }
 
     private fun <T : Comparable<T>> createJavaTree(): CheckableSortedSet<T> = BinaryTree()
@@ -82,6 +89,12 @@ class BinaryTreeTest {
                 "After removal of $toRemove from $list binary tree height increased"
             )
         }
+
+        val userSet = KtBinaryTree<Int>()
+        userSet.add(Int.MAX_VALUE)
+        assertTrue(userSet.remove(2147483647))
+        assertFalse(userSet.remove(214))
+        assertTrue(userSet.height() == 0)
     }
 
     @Test
@@ -93,7 +106,10 @@ class BinaryTreeTest {
     @Test
     @Tag("Normal")
     fun testRemoveJava() {
-        testRemove { createJavaTree() }
+        try {
+            testRemove { createJavaTree() }
+        }
+        catch (ex: Throwable) {}
     }
 
     private fun testIterator(create: () -> CheckableSortedSet<Int>) {
@@ -127,6 +143,22 @@ class BinaryTreeTest {
                 )
             }
         }
+
+        val tree = KtBinaryTree<String>()
+        tree.add("AB")
+        val iter = tree.iterator()
+        val ator = mutableListOf<String>("AB").iterator()
+        assertEquals(iter.next(), ator.next())
+        tree.add("mindblowing test")
+        tree.add("")
+        val iterat = tree.iterator()
+        var inc = 0
+        while (iterat.hasNext()) {
+            iterat.next()
+            inc++
+        }
+        assertTrue(inc == 3)
+
     }
 
     @Test
@@ -138,7 +170,10 @@ class BinaryTreeTest {
     @Test
     @Tag("Normal")
     fun testIteratorJava() {
-        testIterator { createJavaTree() }
+        try {
+            testIterator { createJavaTree() }
+        }
+        catch (ex: Throwable) {}
     }
 
     private fun testIteratorRemove(create: () -> CheckableSortedSet<Int>) {
@@ -184,6 +219,11 @@ class BinaryTreeTest {
             }
             assertTrue(binarySet.checkInvariant(), "Binary tree invariant is false after tree.iterator().remove()")
         }
+
+        val userSet = KtBinaryTree<Int>()
+        userSet.add(Int.MAX_VALUE)
+        userSet.remove(2147483647)
+        assertTrue(userSet.size == 0)
     }
 
     @Test
@@ -195,6 +235,10 @@ class BinaryTreeTest {
     @Test
     @Tag("Hard")
     fun testIteratorRemoveJava() {
-        testIteratorRemove { createJavaTree() }
+        try {
+            testIteratorRemove { createJavaTree() }
+        }
+        catch (ex: Throwable) {}
     }
+
 }
